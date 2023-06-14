@@ -10,6 +10,8 @@ Apply this macro to a variable inside an `EnvironmentValues` extension to add it
 The assigned value is the default value and is required, unless the type is Optional.
 The type can be inferred by its value, just like in normal Swift code.
 ```swift
+import SwiftUIMacros
+
 extension EnvironmentValues {
     @EnvironmentValue
     var alignment: Alignment = .center
@@ -36,6 +38,8 @@ extension EnvironmentValues {
 Apply this to an `EnvironmentValues` extension to add the `EnviromentValue` macro to each variable inside the extension.
 
 ```swift
+import SwiftUIMacros
+
 @EnvironmentStorage
 extension EnvironmentValues {
     var alignment: Alignment = .center
