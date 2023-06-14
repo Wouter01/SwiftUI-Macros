@@ -2,6 +2,8 @@
 
 A library of useful macros for SwiftUI.
 
+Swift 5.9 or later is required to use this package.
+
 ## Environment
 
 To allow easier creation of new environment keys, two macros are available:
