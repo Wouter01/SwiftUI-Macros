@@ -1,33 +1,64 @@
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
-import MyMacroMacros
+import SwiftUIMacrosImpl
 
 let testMacros: [String: Macro.Type] = [
-    "stringify": StringifyMacro.self,
+    "EnvironmentValue": AttachedMacroEnvironmentKey.self,
+    "EnvironmentStorage": EnvironmentStorage.self
 ]
 
 final class MyMacroTests: XCTestCase {
-    func testMacro() {
+    func testMacroWithStringLiteral() {
         assertMacroExpansion(
             """
-            #stringify(a + b)
+            struct Hello {
+                @EnvironmentValue(defaultValue: false)
+                var test: Bool = false
+            }
             """,
-            expandedSource: """
-            (a + b, "a + b")
+            expandedSource:
+            """
+            struct Hello {
+                var test: Bool = false {
+                    get {
+                        self [EnvironmentKey_test.self]
+                    }
+                    set {
+                        self [EnvironmentKey_test.self] = newValue
+                    }
+                }
+                struct EnvironmentKey_test: EnvironmentKey {
+                    static var defaultValue: Bool = false
+                }
+            }
             """,
             macros: testMacros
         )
     }
 
-    func testMacroWithStringLiteral() {
+    func testEnvironmentStorage() {
         assertMacroExpansion(
-            #"""
-            #stringify("Hello, \(name)")
-            """#,
-            expandedSource: #"""
-            ("Hello, \(name)", #""Hello, \(name)""#)
-            """#,
+            """
+            @EnvironmentStorage
+            struct Hello {
+                var test: Bool = false
+            }
+            """,
+            expandedSource:
+            """
+            
+            struct Hello {
+                var test: Bool = false {
+                    get {
+                        self [EnvironmentKey_test.self]
+                    }
+                    set {
+                        self [EnvironmentKey_test.self] = newValue
+                    }
+                }
+            }
+            """,
             macros: testMacros
         )
     }
