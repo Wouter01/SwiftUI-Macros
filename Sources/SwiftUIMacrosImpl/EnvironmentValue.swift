@@ -43,7 +43,7 @@ public struct AttachedMacroEnvironmentKey: PeerMacro {
 
         return [
             """
-            struct EnvironmentKey_\(raw: identifier): EnvironmentKey {
+            internal struct EnvironmentKey_\(raw: identifier): EnvironmentKey {
                 static var \(binding)
             }
             """
