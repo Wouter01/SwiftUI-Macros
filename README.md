@@ -4,6 +4,25 @@ A library of useful macros for SwiftUI.
 
 Swift 5.9 or later is required to use this package.
 
+## Installation
+#### Swift Package Manager
+
+Add the dependency:
+```swift
+dependencies: [
+    .package(url: "https://github.com/Wouter01/SwiftUI-Macros.git", from: "1.0.0")
+]
+ ```
+ 
+ Add the dependency to your target:
+ ```swift
+.target(
+    name: "MyTarget",
+    dependencies: [.product(name: "SwiftUIMacros", package: "SwiftUI-Macros")]
+)
+ ```
+
+
 ## Environment
 
 To allow easier creation of new environment keys, two macros are available:
