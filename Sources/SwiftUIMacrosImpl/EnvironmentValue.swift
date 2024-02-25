@@ -44,7 +44,7 @@ public struct AttachedMacroEnvironmentKey: PeerMacro {
         return [
             """
             internal struct EnvironmentKey_\(raw: identifier): EnvironmentKey {
-                static var \(binding)
+                static let \(binding) \(raw: isOptionalType && !hasDefaultValue ? "= nil" : "")
             }
             """
         ]
