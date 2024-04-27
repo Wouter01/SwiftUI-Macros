@@ -26,7 +26,7 @@ dependencies: [
 ## Environment
 
 To allow easier creation of new environment keys, two macros are available:
-#### EnvironmentValue
+#### EnvironmentKey
 Apply this macro to a variable inside an `EnvironmentValues` extension to add it to the environment.
 The assigned value is the default value and is required, unless the type is Optional.
 The type can be inferred by its value, just like in normal Swift code.
@@ -34,7 +34,7 @@ The type can be inferred by its value, just like in normal Swift code.
 import SwiftUIMacros
 
 extension EnvironmentValues {
-    @EnvironmentValue
+    @EnvironmentKey
     var alignment: Alignment = .center
 }
 
@@ -49,19 +49,19 @@ extension EnvironmentValues {
       }
     }
     
-    struct EnvironmentKey_alignment: EnvironmentKey {
-       static var defaultValue: Alignment = .center
+    private struct EnvironmentKey_alignment: EnvironmentKey {
+       static let defaultValue: Alignment = .center
     }
 }
 ```
 
-#### EnvironmentStorage
-Apply this to an `EnvironmentValues` extension to add the `EnviromentValue` macro to each variable inside the extension.
+#### EnvironmentValues
+Apply this to an `EnvironmentValues` extension to add the `EnviromentKey` macro to each variable inside the extension.
 
 ```swift
 import SwiftUIMacros
 
-@EnvironmentStorage
+@EnvironmentValues
 extension EnvironmentValues {
     var alignment: Alignment = .center
     
@@ -72,13 +72,68 @@ extension EnvironmentValues {
 
 // Expands to
 extension EnvironmentValues {
-    @EnvironmentValue
+    @EnvironmentKey
     var alignment: Alignment = .center
     
-    @EnvironmentValue
+    @EnvironmentKey
     var secondaryFont: Font?
     
-    @EnvironmentValue
+    @EnvironmentKey
     var gridLines = 0
+}
+```
+
+## Focus
+
+To allow easier creation of new focusedValue keys, two macros are available:
+
+#### FocusedValueKey
+Apply this macro to a variable inside a `FocusedValues` extension to add it to the focused values.
+```swift
+import SwiftUIMacros
+
+extension FocusedValues {
+    @FocusedValueKey
+    var enabled: Bool?
+}
+
+// Expands to
+extension FocusedValues {
+    @FocusedValueKey
+    var enabled: Bool? {
+        get {
+            self [FocusedValueKey_enabled.self]
+        }
+        set {
+            self [FocusedValueKey_enabled.self] = newValue
+        }
+    }
+    
+    private struct FocusedValueKey_enabled: FocusedValueKey {
+        typealias Value = Bool
+    }
+}
+```
+
+#### FocusedValues
+Apply this to an `FocusedValues` extension to add the `FocusedValueKey` macro to each variable inside the extension.
+
+```swift
+import SwiftUIMacros
+
+@FocusedValues
+extension FocusedValues {
+    var showCompletions: Binding<Bool>?
+
+    var value: Int?
+}
+
+// Expands to
+extension FocusedValues {
+    @FocusedValueKey
+    var showCompletions: Binding<Bool>?
+
+    @FocusedValueKey
+    var value: Int?
 }
 ```
