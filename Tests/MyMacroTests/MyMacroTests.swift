@@ -4,8 +4,9 @@ import XCTest
 import SwiftUIMacrosImpl
 
 let testMacros: [String: Macro.Type] = [
+    "EnvironmentStorage": EnvironmentStorage.self,
     "EnvironmentValue": AttachedMacroEnvironmentKey.self,
-    "EnvironmentStorage": EnvironmentStorage.self
+    "FocusedValue": AttachedMacroFocusedValueKey.self
 ]
 
 final class MyMacroTests: XCTestCase {
@@ -13,14 +14,14 @@ final class MyMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             struct Hello {
-                @EnvironmentValue(defaultValue: false)
+                @EnvironmentValue
                 var test: Bool = false
             }
             """,
             expandedSource:
             """
             struct Hello {
-                var test: Bool = false {
+                var test: Bool {
                     get {
                         self [EnvironmentKey_test.self]
                     }
@@ -28,8 +29,38 @@ final class MyMacroTests: XCTestCase {
                         self [EnvironmentKey_test.self] = newValue
                     }
                 }
-                struct EnvironmentKey_test: EnvironmentKey {
-                    static var defaultValue: Bool = false
+
+                private struct EnvironmentKey_test: EnvironmentKey {
+                    static let defaultValue: Bool = false
+                }
+            }
+            """,
+            macros: testMacros
+        )
+    }
+
+    func testFocusedValueMacro() {
+        assertMacroExpansion(
+            """
+            struct Hello {
+                @FocusedValue
+                var test: Bool?
+            }
+            """,
+            expandedSource:
+            """
+            struct Hello {
+                var test: Bool? {
+                    get {
+                        self [FocusedValueKey_test.self]
+                    }
+                    set {
+                        self [FocusedValueKey_test.self] = newValue
+                    }
+                }
+
+                private struct FocusedValueKey_test: FocusedValueKey {
+                    typealias Value = Bool
                 }
             }
             """,
@@ -41,22 +72,15 @@ final class MyMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @EnvironmentStorage
-            struct Hello {
+            extension EnvironmentValues {
                 var test: Bool = false
             }
             """,
             expandedSource:
             """
-            
-            struct Hello {
-                var test: Bool = false {
-                    get {
-                        self [EnvironmentKey_test.self]
-                    }
-                    set {
-                        self [EnvironmentKey_test.self] = newValue
-                    }
-                }
+            extension EnvironmentValues {
+                @EnvironmentKey
+                var test: Bool = false
             }
             """,
             macros: testMacros

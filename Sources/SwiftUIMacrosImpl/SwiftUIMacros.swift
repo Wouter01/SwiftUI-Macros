@@ -12,6 +12,7 @@ import SwiftSyntaxMacros
 struct SwiftUIMacros: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         EnvironmentStorage.self,
-        AttachedMacroEnvironmentKey.self
+        AttachedMacroEnvironmentKey.self,
+        AttachedMacroFocusedValueKey.self
     ]
 }

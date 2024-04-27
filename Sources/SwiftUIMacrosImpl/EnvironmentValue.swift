@@ -21,12 +21,12 @@ public struct AttachedMacroEnvironmentKey: PeerMacro {
             return []
         }
 
-        guard var binding = varDecl.bindings.first?.as(PatternBindingSyntax.self)else {
+        guard var binding = varDecl.bindings.first else {
             context.diagnose(Diagnostic(node: Syntax(node), message: Feedback.missingAnnotation))
             return []
         }
 
-        guard let identifier = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
+        guard let identifier = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier else {
             context.diagnose(Diagnostic(node: Syntax(node), message: Feedback.notAnIdentifier))
             return []
         }
@@ -43,7 +43,7 @@ public struct AttachedMacroEnvironmentKey: PeerMacro {
 
         return [
             """
-            internal struct EnvironmentKey_\(raw: identifier): EnvironmentKey {
+            private struct EnvironmentKey_\(identifier): EnvironmentKey {
                 static let \(binding) \(raw: isOptionalType && !hasDefaultValue ? "= nil" : "")
             }
             """
@@ -63,12 +63,12 @@ extension AttachedMacroEnvironmentKey: AccessorMacro {
             return []
         }
 
-        guard let binding = varDecl.bindings.first?.as(PatternBindingSyntax.self)else {
+        guard let binding = varDecl.bindings.first else {
             context.diagnose(Diagnostic(node: Syntax(node), message: Feedback.missingAnnotation))
             return []
         }
 
-        guard let identifier = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier.text else {
+        guard let identifier = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier else {
             context.diagnose(Diagnostic(node: Syntax(node), message: Feedback.notAnIdentifier))
             return []
         }
@@ -76,12 +76,12 @@ extension AttachedMacroEnvironmentKey: AccessorMacro {
         return [
             """
             get {
-                self[EnvironmentKey_\(raw: identifier).self]
+                self[EnvironmentKey_\(identifier).self]
             }
             """,
             """
             set {
-                self[EnvironmentKey_\(raw: identifier).self] = newValue
+                self[EnvironmentKey_\(identifier).self] = newValue
             }
             """
         ]
